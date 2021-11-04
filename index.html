@@ -126,6 +126,7 @@
 			return this;
 		}
 		Island.prototype.loadOverpass = function(bbox){
+			bbox = {'S':bbox[0],'W':bbox[1],'N':bbox[2],'E':bbox[3]};
 			this.bbox = bbox;
 			var url = 'overpass.json';
 			fetch(url)
@@ -162,6 +163,9 @@
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.amenity=="townhall"){
 					this.addPOI('townhall',this.overpass.elements[i],this.bbox);
+				}
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.tourism=="museum"){
+					this.addPOI('museum',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes" && (this.overpass.elements[i].tags.highway=="primary" || this.overpass.elements[i].tags.highway=="trunk")){
 					this.addPOI('bridge',this.overpass.elements[i],this.bbox);
@@ -205,10 +209,10 @@
 			'tailor':'<img src="icons/tailor.svg" />',
 			'townhall':'<img src="icons/townhall.svg" />',
 			'bridge':'?',
-			'ns':'|',
-			'ew':'—',
-			'nwse':'&#10189;',
-			'swne':'&#10187;'
+			'bridge-ns':'<img src="icons/bridge-ns.svg" />',
+			'bridge-ew':'<img src="icons/bridge-ew.svg" />',
+			'bridge-nwse':'&#10189;',
+			'bridge-swne':'<img src="icons/bridge-swne.svg" />'
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
 			console.log(typ,element);
@@ -226,7 +230,7 @@
 				}else{
 					bearing = '?';
 					if(element.nodes.length==2) bearing = getBearing(this.data.lookup[element.nodes[0]],this.data.lookup[element.nodes[1]]);
-					el.innerHTML = icons[bearing]||'?';
+					el.innerHTML = icons['bridge-'+bearing]||'?';
 				}
 				el.style.left = l+'%';
 				el.style.top = t+'%';
@@ -292,7 +296,7 @@
 
 		var url = "http://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0A%2F%2F%20gather%20results%0A%28%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Dtailor%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Ddepartment_store%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Camenity%3Dtownhall%E2%80%9D%0A%20%20node%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Caeroway%3Daerodrome%E2%80%9D%0A%20%20node%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Ctourism%3Dcamp_site%E2%80%9D%0A%20%20node%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cman_made%3Dbridge%E2%80%9D%0A%20%20node%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cbuilding%3Dapartments%E2%80%9D%0A%20%20node%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dtrunk%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dprimary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dsecondary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%29%3B%0A%2F%2F%20print%20results%0Aout%20body%3B%0A%3E%3B%0Aout%20skel%20qt%3B"
 		island = new ACNH.island({'el':document.getElementById('island-map')});
-		island.loadOverpass({'S':53.84275414518541,'W':-1.725454330444336,'N':53.88850803804957,'E':-1.6349029541015625});
+		island.loadOverpass([53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781]);
 	});
 	</script>
 </head>
