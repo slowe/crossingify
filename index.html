@@ -43,7 +43,7 @@
 
 	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
 
-	#island-map { border: 1px solid white; text-align: center; font-size: 24px; padding: 2em 3em 3em 3em; background-image: url(textures/sea.png); }
+	#island-map { text-align: center; font-size: 24px; padding: 2em 3em 3em 3em; background-image: url(textures/sea.png); }
 	#island-map .inner { width: 100%; height: 100%; position: relative; display: grid; grid-template-rows: auto 1fr; grid-gap: 1em; }
 
 	header { position: relative; z-index: 1; font-size: 1.5em; }
@@ -101,7 +101,10 @@
 	.land { background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; }
 	.overlay { z-index: 10; }
 	.point { width: 1.75em; height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); }
-	
+	.point img { width: 100%; }
+	.tooltip { transition: all 0.3s ease-out; position: absolute; line-height: 2em; min-width: 8em; top: 0; left: 50%; background: #dce8c2; white-space: nowrap; transform: translate3d(-50%,-100%,0); padding: 0 1em; border-radius:1em; }
+	.tooltip.active { transform: translate3d(-50%,-150%,0); }
+	.tooltip::before { content: ""; position: absolute; width: 0; height: 0; border: 0.5em solid transparent;border-top: 0.75em solid #dce8c2; border-bottom: 0px;left: 50%; top: 95%; transform: translate3d(-50%,0,0); }
 	@media only screen and (max-width: 960px) {
 		#island-map { font-size: calc(2vw + .5vmin); }
 	}
@@ -128,7 +131,7 @@
 			fetch(url)
 			.then(response => response.json())
 			.then(data => {
-				this.data = data;
+				this.overpass = data;
 				this.updateMap();
 			});
 		};
@@ -137,32 +140,33 @@
 			var dlat = Math.abs(this.bbox.N-this.bbox.S);
 			overlay = this.el.querySelector('.overlay');
 			overlay.innerHTML = "";
-			data = {'nodes':{},'ways':{}};
-			for(var i = 0; i < this.data.elements.length; i++){
-				if(this.data.elements[i].type=="node") data.nodes[this.data.elements[i].id] = this.data.elements[i];
-				if(this.data.elements[i].type=="way") data.ways[this.data.elements[i].id] = this.data.elements[i];
+			this.data = {'nodes':{},'ways':{},'lookup':{}};
+			for(var i = 0; i < this.overpass.elements.length; i++){
+				if(this.overpass.elements[i].type=="node") this.data.nodes[this.overpass.elements[i].id] = this.overpass.elements[i];
+				if(this.overpass.elements[i].type=="way") this.data.ways[this.overpass.elements[i].id] = this.overpass.elements[i];
+				this.data.lookup[this.overpass.elements[i].id] = this.overpass.elements[i];
 			}
-			for(var i = 0; i < this.data.elements.length; i++){
+			for(var i = 0; i < this.overpass.elements.length; i++){
 				
-				if(this.data.elements[i].type=="node" && this.data.elements[i].tags && this.data.elements[i].tags.shop && this.data.elements[i].tags.shop=="tailor"){
-					console.log(i,this.data.elements[i]);
-					overlay.appendChild(makeIcon('tailor',data,this.data.elements[i],this.bbox));
+				if(this.overpass.elements[i].type=="node" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="tailor"){
+					console.log(i,this.overpass.elements[i]);
+					overlay.appendChild(this.makeIcon('tailor',this.overpass.elements[i],this.bbox));
 				}
-				if(this.data.elements[i].tags && this.data.elements[i].tags.shop && this.data.elements[i].tags.shop=="department_store"){
-					console.log(i,this.data.elements[i]);
-					overlay.appendChild(makeIcon('shop',data,this.data.elements[i],this.bbox));
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="department_store"){
+					console.log(i,this.overpass.elements[i]);
+					overlay.appendChild(this.makeIcon('shop',this.overpass.elements[i],this.bbox));
 				}
-				if(this.data.elements[i].tags && this.data.elements[i].tags.aeroway=="aerodrome"){
-					console.log(i,this.data.elements[i]);
-					overlay.appendChild(makeIcon('airport',data,this.data.elements[i],this.bbox));
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.aeroway=="aerodrome"){
+					console.log(i,this.overpass.elements[i]);
+					overlay.appendChild(this.makeIcon('airport',this.overpass.elements[i],this.bbox));
 				}
-				if(this.data.elements[i].tags && this.data.elements[i].tags.tourism=="camp_site"){
-					console.log(i,this.data.elements[i]);
-					overlay.appendChild(makeIcon('campsite',data,this.data.elements[i],this.bbox));
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.tourism=="camp_site"){
+					console.log(i,this.overpass.elements[i]);
+					overlay.appendChild(this.makeIcon('campsite',this.overpass.elements[i],this.bbox));
 				}
-				if(this.data.elements[i].tags && this.data.elements[i].tags.amenity=="townhall"){
-					console.log(i,this.data.elements[i]);
-					overlay.appendChild(makeIcon('townhall',data,this.data.elements[i],this.bbox));
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.amenity=="townhall"){
+					console.log(i,this.overpass.elements[i]);
+					overlay.appendChild(this.makeIcon('townhall',this.overpass.elements[i],this.bbox));
 				}
 			}
 		};
@@ -195,15 +199,36 @@
 			}
 			
 		}
-		function makeIcon(typ,data,element,bbox){
-			var el = document.createElement('img');
-			var pos = findCentre(data,element);
+		Island.prototype.makeIcon = function(typ,element,bbox){
+			var el = document.createElement('div');
+			var pos = findCentre(this.data,element);
+			el.setAttribute('data',element.id);
 			el.classList.add('point');
-			el.src = 'icons/'+typ+'.svg';
+			el.innerHTML = '<img src="icons/'+typ+'.svg" />';
 			el.style.left = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E))+'%';
 			el.style.top = (100-100*(pos.lat-bbox.S)/Math.abs(bbox.N-bbox.S))+'%';
+			var _obj = this;
+			el.addEventListener('click',function(e){
+				_obj.showTooltip(e.target);
+			});
 			return el;
-		}
+		};
+		Island.prototype.showTooltip = function(el){
+			element = this.data.lookup[el.parentNode.getAttribute('data')];
+			txt = element.tags.name;
+			console.log('showTooltip',el,txt);
+			var tooltips = this.el.querySelectorAll('.tooltip');
+			if(tooltips){
+				for(i = 0 ; i < tooltips.length; i++) tooltips[i].parentNode.removeChild(tooltips[i]);
+			}
+			tooltip = document.createElement('div');
+			tooltip.id = "tooltip";
+			tooltip.innerHTML = txt;
+			tooltip.classList.add('tooltip');
+			el.closest('div').appendChild(tooltip);
+			setTimeout(function(){ tooltip.classList.add('active'); },100);
+//			tooltip.classList.add('active');
+		};
 
 		ACNH.island = Island;
 		root.ACNH = ACNH;		
