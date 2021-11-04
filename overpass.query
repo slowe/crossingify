@@ -1,57 +1,48 @@
-[out:json][timeout:25];
-// gather results
+[out:json][timeout:25][bbox:53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781];
 (
 
-  node["shop"="tailor"]({{bbox}});
-  way["shop"="tailor"]({{bbox}});
-  relation["shop"="tailor"]({{bbox}});
+  node["shop"="tailor"];
+  way["shop"="tailor"];
+  relation["shop"="tailor"];
 
-  node["shop"="department_store"]({{bbox}});
-  way["shop"="department_store"]({{bbox}});
-  relation["shop"="department_store"]({{bbox}});
+  node["shop"="department_store"];
+  way["shop"="department_store"];
+  relation["shop"="department_store"];
 
-  node["amenity"="townhall"]({{bbox}});
-  way["amenity"="townhall"]({{bbox}});
-  relation["amenity"="townhall"]({{bbox}});
+  node["amenity"="townhall"];
+  way["amenity"="townhall"];
+  relation["amenity"="townhall"];
 
-  node["aeroway"="aerodrome"]({{bbox}});
-  way["aeroway"="aerodrome"]({{bbox}});
-  relation["aeroway"="aerodrome"]({{bbox}});
+  node["aeroway"="aerodrome"];
+  way["aeroway"="aerodrome"];
+  relation["aeroway"="aerodrome"];
 
-  node["tourism"="camp_site"]({{bbox}});
-  way["tourism"="camp_site"]({{bbox}});
-  relation["tourism"="camp_site"]({{bbox}});
+  node["tourism"="camp_site"];
+  way["tourism"="camp_site"];
+  relation["tourism"="camp_site"];
 
-  node["tourism"="museum"]({{bbox}});
-  way["tourism"="museum"]({{bbox}});
-  relation["tourism"="museum"]({{bbox}});
+  node["tourism"="museum"];
+  way["tourism"="museum"];
+  relation["tourism"="museum"];
 
-  way["bridge"="yes"]({{bbox}});
-  relation["bridge"="yes"]({{bbox}});
+  way["bridge"="yes"]["highway"~"primary|trunk"];
 
-  node["building"="apartments"]({{bbox}});
-  way["building"="apartments"]({{bbox}});
-  relation["building"="apartments"]({{bbox}});
+  //node["building"="apartments"];
+  //way["building"="apartments"];
+  //relation["building"="apartments"];
 
-  node["highway"="trunk"]({{bbox}});
-  way["highway"="trunk"]({{bbox}});
-  relation["highway"="trunk"]({{bbox}});
+  way["highway"~"trunk|primary"];
 
-  node["highway"="primary"]({{bbox}});
-  way["highway"="primary"]({{bbox}});
-  relation["highway"="primary"]({{bbox}});
+  //way["waterway"="river"];
+  //relation["waterway"="river"];
 
-  way["waterway"="river"]({{bbox}});
-  relation["waterway"="river"]({{bbox}});
+  //way["waterway"="canal"];
+  //relation["waterway"="canal"];
 
-  way["waterway"="canal"]({{bbox}});
-  relation["waterway"="canal"]({{bbox}});
-
-  way["water"="lake"]({{bbox}});
-  relation["water"="lake"]({{bbox}});
+  way["water"="lake"];
+  relation["water"="lake"];
 
 );
-// print results
 out body;
 >;
 out skel qt;

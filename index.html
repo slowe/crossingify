@@ -3,7 +3,7 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8" />
-	<title>Crossing-ify: turn real places into ACNH-style maps</title>
+	<title>Crossing-ify: ACNH-style maps of real places</title>
 	<script>
 	
 	</script>
@@ -39,14 +39,16 @@
 	}
 
 	html { min-height: 100%; }
-	body { background: #78d5c3;  font-family: Quicksand, sans-serif; padding: 0; margin: 0; background-image: url(textures/sea.png); }
-
-	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
+	body { background: #78d5c3;  font-family: Quicksand, sans-serif; padding: 0; margin: 0; font-size: 16px; background-image: url(textures/sea.png); }
+	h1 { font-size: 2em; text-align: center; }
+	h1 + * { margin-top: 1em; }
+	p { margin-bottom: 1em; }
+	.holder { width: 1080px; margin: auto; padding: 1em; max-width: 100%; }
 
 	#island-map { text-align: center; font-size: 24px; padding: 2em 3em 3em 3em; background-image: url(textures/sea.png); }
 	#island-map .inner { width: 100%; height: 100%; position: relative; display: grid; grid-template-rows: auto 1fr; grid-gap: 1em; }
 
-	header { position: relative; z-index: 1; font-size: 1.5em; }
+	.header { position: relative; z-index: 1; font-size: 1.5em; }
 	.banner {
 		position: relative;
 		display: inline-block;
@@ -293,22 +295,24 @@
 
 	var island;
 	ACNH.ready(function(){
-
+		var bbox = [53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781];
 		var url = "http://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0A%2F%2F%20gather%20results%0A%28%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Dtailor%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Ddepartment_store%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Camenity%3Dtownhall%E2%80%9D%0A%20%20node%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Caeroway%3Daerodrome%E2%80%9D%0A%20%20node%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Ctourism%3Dcamp_site%E2%80%9D%0A%20%20node%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cman_made%3Dbridge%E2%80%9D%0A%20%20node%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cbuilding%3Dapartments%E2%80%9D%0A%20%20node%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dtrunk%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dprimary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dsecondary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%29%3B%0A%2F%2F%20print%20results%0Aout%20body%3B%0A%3E%3B%0Aout%20skel%20qt%3B"
 		island = new ACNH.island({'el':document.getElementById('island-map')});
-		island.loadOverpass([53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781]);
+		island.loadOverpass(bbox);
 	});
 	</script>
 </head>
 <body>
 
 	<div class="holder">
+		<h1>Crossing-ify</h1>
+		<p style="text-align:center;">An experiment in turning real places into ACNH-style maps.</p>
 
 		<div id="island-map">
 			<div class="inner">
-				<header>
-					<h1 class="banner">Yeadon</h1>
-				</header>
+				<div class="header">
+					<h2 class="banner">Yeadon</h2>
+				</div>
 				<div class="island">
 					<div class="island-inner">
 						<div class="grid">
