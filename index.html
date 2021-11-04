@@ -100,7 +100,7 @@
 	.land, .overlay { position: absolute; top: 10%; left: 8.5%; width: 83%; height: 80%; }
 	.land { background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; }
 	.overlay { z-index: 10; }
-	.point { width: 1.75em; height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); cursor: pointer; }
+	.point { width: 1.75em; height: 1.75em; line-height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); cursor: pointer; }
 	.point img { width: 100%; }
 	.tooltip { transition: all 0.3s ease-out; position: absolute; line-height: 2em; min-width: 8em; top: 0; left: 50%; background: #dce8c2; white-space: nowrap; transform: translate3d(-50%,-100%,0); padding: 0 1em; border-radius:1em; }
 	.tooltip.active { transform: translate3d(-50%,-150%,0); }
@@ -138,8 +138,8 @@
 		Island.prototype.updateMap = function(){
 			var dlon = Math.abs(this.bbox.W-this.bbox.E);
 			var dlat = Math.abs(this.bbox.N-this.bbox.S);
-			overlay = this.el.querySelector('.overlay');
-			overlay.innerHTML = "";
+			this.overlay = this.el.querySelector('.overlay');
+			this.overlay.innerHTML = "";
 			this.data = {'nodes':{},'ways':{},'lookup':{}};
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="node") this.data.nodes[this.overpass.elements[i].id] = this.overpass.elements[i];
@@ -149,24 +149,22 @@
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				
 				if(this.overpass.elements[i].type=="node" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="tailor"){
-					console.log(i,this.overpass.elements[i]);
-					overlay.appendChild(this.makeIcon('tailor',this.overpass.elements[i],this.bbox));
+					this.addPOI('tailor',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="department_store"){
-					console.log(i,this.overpass.elements[i]);
-					overlay.appendChild(this.makeIcon('shop',this.overpass.elements[i],this.bbox));
+					this.addPOI('shop',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.aeroway=="aerodrome"){
-					console.log(i,this.overpass.elements[i]);
-					overlay.appendChild(this.makeIcon('airport',this.overpass.elements[i],this.bbox));
+					this.addPOI('airport',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.tourism=="camp_site"){
-					console.log(i,this.overpass.elements[i]);
-					overlay.appendChild(this.makeIcon('campsite',this.overpass.elements[i],this.bbox));
+					this.addPOI('campsite',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.amenity=="townhall"){
-					console.log(i,this.overpass.elements[i]);
-					overlay.appendChild(this.makeIcon('townhall',this.overpass.elements[i],this.bbox));
+					this.addPOI('townhall',this.overpass.elements[i],this.bbox);
+				}
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes" && (this.overpass.elements[i].tags.highway=="primary" || this.overpass.elements[i].tags.highway=="trunk")){
+					this.addPOI('bridge',this.overpass.elements[i],this.bbox);
 				}
 			}
 		};
@@ -199,36 +197,91 @@
 			}
 			
 		}
-		Island.prototype.makeIcon = function(typ,element,bbox){
-			var el = document.createElement('div');
-			var pos = findCentre(this.data,element);
-			el.setAttribute('data',element.id);
-			el.classList.add('point');
-			el.innerHTML = '<img src="icons/'+typ+'.svg" />';
-			el.style.left = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E))+'%';
-			el.style.top = (100-100*(pos.lat-bbox.S)/Math.abs(bbox.N-bbox.S))+'%';
-			var _obj = this;
-			el.addEventListener('click',function(e){
-				_obj.showTooltip(e.target);
-			});
-			return el;
+		icons = {
+			'airport':'<img src="icons/airport.svg" />',
+			'campsite':'<img src="icons/campsite.svg" />',
+			'museum':'<img src="icons/museum.svg" />',
+			'shop':'<img src="icons/shop.svg" />',
+			'tailor':'<img src="icons/tailor.svg" />',
+			'townhall':'<img src="icons/townhall.svg" />',
+			'bridge':'?',
+			'ns':'|',
+			'ew':'—',
+			'nwse':'\\',
+			'swne':'/'
+		};
+		Island.prototype.addPOI = function(typ,element,bbox){
+			console.log(typ,element);
+			var a,b,pos,l,t,el,_obj,bearing;
+			pos = findCentre(this.data,element);
+			l = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E));
+			t = (100-100*(pos.lat-bbox.S)/Math.abs(bbox.N-bbox.S));
+			if(l >= 0 && l <= 100 && t >= 0 && t<= 100){
+				var el = document.createElement('div');
+				el.setAttribute('data',element.id);
+				el.setAttribute('data-type',typ);
+				el.classList.add('point');
+				if(typ!="bridge"){
+					el.innerHTML = icons[typ]||'';
+				}else{
+					bearing = '?';
+					if(element.nodes.length==2) bearing = getBearing(this.data.lookup[element.nodes[0]],this.data.lookup[element.nodes[1]]);
+					el.innerHTML = icons[bearing]||'?';
+				}
+				el.style.left = l+'%';
+				el.style.top = t+'%';
+				_obj = this;
+				el.addEventListener('click',function(e){
+					_obj.showTooltip(e.target);
+				});
+				this.overlay.appendChild(el);
+			}else{
+				console.warn(typ+' is off the island!',pos,l,t);
+			}
+			return this;
 		};
 		Island.prototype.showTooltip = function(el){
-			element = this.data.lookup[el.parentNode.getAttribute('data')];
-			txt = element.tags.name;
-			console.log('showTooltip',el,txt);
 			var tooltips = this.el.querySelectorAll('.tooltip');
 			if(tooltips){
 				for(i = 0 ; i < tooltips.length; i++) tooltips[i].parentNode.removeChild(tooltips[i]);
 			}
-			tooltip = document.createElement('div');
-			tooltip.id = "tooltip";
-			tooltip.innerHTML = txt;
-			tooltip.classList.add('tooltip');
-			el.closest('div').appendChild(tooltip);
-			setTimeout(function(){ tooltip.classList.add('active'); },100);
-//			tooltip.classList.add('active');
+			// If the target still exists in the DOM
+			if(el.parentNode){
+				var p = (el.tagName=="DIV") ? el : el.parentNode;
+				element = this.data.lookup[p.getAttribute('data')];
+				// Bring to front by appending to parent
+				p.parentNode.appendChild(p);
+				if(element.tags['bridge:name']) txt = element.tags['bridge:name'];
+				else if(element.tags.name) txt = element.tags.name;
+				else txt = p.getAttribute('data-type')||"Object";
+				console.log('showTooltip',el,txt,p,element);
+				tooltip = document.createElement('div');
+				tooltip.id = "tooltip";
+				tooltip.innerHTML = txt;
+				tooltip.classList.add('tooltip');
+				el.closest('div').appendChild(tooltip);
+				// Wait a short time before adding the animation class
+				setTimeout(function(){ tooltip.classList.add('active'); },100);
+			}
 		};
+		function getBearing(a,b){
+			var theta,theta_a,theta_b,dl,x,y,bearing,compass;
+			theta_a = a.lat*Math.PI/180;
+			theta_b = b.lat*Math.PI/180;
+			dl = (b.lon-a.lon)*Math.PI/180;
+			y = Math.sin(dl) * Math.cos(theta_b);
+			x = Math.cos(theta_a)*Math.sin(theta_b) -  Math.sin(theta_a)*Math.cos(theta_b)*Math.cos(dl);
+			theta = Math.atan2(y, x);
+			bearing = (theta*180/Math.PI + 360) % 360; // in degrees
+			if(bearing > 180) bearing -= 360;
+			compass = "";
+			if((bearing > -30 && bearing < 30) || bearing > 150 || bearing < -150) compass = "ns";
+			else if((bearing >= 30 && bearing <= 60) || (bearing >= 210 && bearing <= 240)) compass = "swne";
+			else if((bearing > 60 && bearing < 120) || (bearing > 250 && bearing < 300)) compass = "ew";
+			else if((bearing > 120 && bearing < 150) || (bearing > 300 && bearing < 330)) compass = "nwse";
+			return compass;
+		}
+
 
 		ACNH.island = Island;
 		root.ACNH = ACNH;		
