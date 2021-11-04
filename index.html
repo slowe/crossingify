@@ -207,8 +207,8 @@
 			'bridge':'?',
 			'ns':'|',
 			'ew':'—',
-			'nwse':'\\',
-			'swne':'/'
+			'nwse':'&#10189;',
+			'swne':'&#10187;'
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
 			console.log(typ,element);
@@ -276,9 +276,9 @@
 			if(bearing > 180) bearing -= 360;
 			compass = "";
 			if((bearing > -30 && bearing < 30) || bearing > 150 || bearing < -150) compass = "ns";
-			else if((bearing >= 30 && bearing <= 60) || (bearing >= 210 && bearing <= 240)) compass = "swne";
-			else if((bearing > 60 && bearing < 120) || (bearing > 250 && bearing < 300)) compass = "ew";
-			else if((bearing > 120 && bearing < 150) || (bearing > 300 && bearing < 330)) compass = "nwse";
+			else if((bearing >= 30 && bearing <= 60) || (bearing <= -120 && bearing >= -150)) compass = "swne";
+			else if((bearing > 60 && bearing < 120) || (bearing < -60 && bearing > -120)) compass = "ew";
+			else if((bearing >= 120 && bearing <= 150) || (bearing <= -30 && bearing >= -60)) compass = "nwse";
 			return compass;
 		}
 
