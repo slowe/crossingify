@@ -315,10 +315,14 @@
 			// Draw waterways
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
-					this.addWay(hexToRGB('#79d5c1'),1/36,this.overpass.elements[i],this.bbox);
+					if(this.overpass.elements[i].tags.motorboat){
+						this.addWay(hexToRGB('#79d5c1'),1/28,this.overpass.elements[i],this.bbox);
+					}else{
+						this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
+					}
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="canal"){
-					this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
+					this.addWay(hexToRGB('#79d5c1'),1/64,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw bridges
