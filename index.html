@@ -97,7 +97,7 @@
 	.island-map .horizontal li .letter { position: absolute; top: 50%; transform: translate3d(0,-50%,0); }
 	.island-map .vertical li .letter { position: absolute; top: 100%; transform: translate3d(0,-100%,0); }
 	.island-map .land, .overlay { position: absolute; top: 10%; left: 8.5%; width: 83%; height: 80%; }
-	.island-map .land { background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; border-radius: 1em; }
+	.island-map .land { overflow: hidden; background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; border-radius: 1em; }
 	.island-map .land .loader { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0); color: white; }
 	.island-map .land canvas { width: 100%; height: 100%; image-rendering: pixelated; }
 	.island-map .overlay { z-index: 10; }
