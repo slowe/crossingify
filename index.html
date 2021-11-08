@@ -99,7 +99,7 @@
 	.island-map .land, .overlay { position: absolute; top: 10%; left: 8.5%; width: 83%; height: 80%; }
 	.island-map .land { overflow: hidden; background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; border-radius: 1em; }
 	.island-map .land .loader { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0); color: white; }
-	.island-map .land canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+	.island-map .land canvas { width: 100%; height: 100%; /*image-rendering: pixelated;*/ }
 	.island-map .overlay { z-index: 10; }
 	.island-map .point { width: 1.75em; height: 1.75em; line-height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); cursor: pointer; }
 	.island-map .point img { width: 100%; }
@@ -201,25 +201,19 @@
 			//t is very important. t is a number that essentially compares the individual coordinates
 			//distances between the point and each point on the line.
 
-			if(t<0){	//if t is less than 0, the point is behind i, and closest to i.
-				return pointDistance(p,i);
-			}	//if greater than 1, it's closest to j.
-			if(t>1){
-				return pointDistance(p,j);
-			}
+			//if t is less than 0, the point is behind i, and closest to i.
+			if(t<0) return pointDistance(p,i);
+			//if greater than 1, it's closest to j.
+			if(t>1) return pointDistance(p,j);
 			return pointDistance(p, { x: i.x+t*(j.x-i.x),y: i.y+t*(j.y-i.y)});
 			//this figure represents the point on the line that p is closest to.
 		}
 
 		//returns distance between two points. Easy geometry.
-		var pointDistance = function (i,j){
-			return sqr(i.x-j.x)+sqr(i.y-j.y);
-		}
+		function pointDistance(i,j){ return sqr(i.x-j.x)+sqr(i.y-j.y); }
 
 		//just to make the code a bit cleaner.
-		sqr = function (x){
-			return x*x;
-		}
+		function sqr(x){ return x*x; }
 		
 		return RDPsd(points,epsilon);
 	}
@@ -320,16 +314,16 @@
 			// Draw waterways
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
-					this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
+					this.addWay(hexToRGB('#79d5c1'),1/36,this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="canal"){
-					this.addWay(hexToRGB('#79d5c1'),1/80,this.overpass.elements[i],this.bbox);
+					this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw bridges
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes"){
-					this.addWay(hexToRGB('#83856d'),1/48,this.overpass.elements[i],this.bbox);
+					this.addWay(hexToRGB('#83856d'),1/36,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw points-of-interest
