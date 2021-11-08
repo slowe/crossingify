@@ -42,6 +42,7 @@
 	h1 + * { margin-top: 1em; }
 	p { margin-bottom: 1em; }
 	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
+	#location { font: inherit; margin: auto; }
 
 	.island-map { position: relative; text-align: center; }
 	.island-map .inner { background-image: url(textures/sea.png); padding: 2em 5em; font-size: 24px; }
@@ -423,7 +424,7 @@
 			return im;
 		}
 		Island.prototype.addWay = function(rgb,thick,element,bbox){
-			console.log('highway',element,this);
+			//console.log('highway',element,this);
 			var w,h,n,node,rgb,pos,i,threshold,imageData,len,path;
 			w = this.canvas.width;
 			h = this.canvas.height;
@@ -519,13 +520,26 @@
 		root.Crossingify = Crossingify;		
 	})(window || this);
 
-	var yeadon,leeds,london;
+	var yeadon,leeds,london,island;
+	
 	Crossingify.ready(function(){
+	
+		select = document.getElementById('location');
+		select.addEventListener('change',function(e){ setIsland(); });
+		function setIsland(){
+			select = document.getElementById('location');
+			if(select.value){
+				file = select.value;
+				name = select.selectedOptions[0].innerHTML;
+				bbox = select.selectedOptions[0].getAttribute('data-bbox').split(/,/);
+				for(var i = 0; i < bbox.length; i++) bbox[i] = parseFloat(bbox[i]);
+				island = new Crossingify.island({'el':document.getElementById('island'),'file':file,'name':name});
+				island.loadOverpass(bbox);
+			}
+		}
+		setIsland();
+		
 		//var url = "http://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0A%2F%2F%20gather%20results%0A%28%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Dtailor%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Ddepartment_store%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Camenity%3Dtownhall%E2%80%9D%0A%20%20node%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Caeroway%3Daerodrome%E2%80%9D%0A%20%20node%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Ctourism%3Dcamp_site%E2%80%9D%0A%20%20node%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cman_made%3Dbridge%E2%80%9D%0A%20%20node%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cbuilding%3Dapartments%E2%80%9D%0A%20%20node%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dtrunk%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dprimary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dsecondary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%29%3B%0A%2F%2F%20print%20results%0Aout%20body%3B%0A%3E%3B%0Aout%20skel%20qt%3B"
-		yeadon = new Crossingify.island({'el':document.getElementById('yeadon'),'file':'yeadon.json','name':'Yeadon'});
-		yeadon.loadOverpass([53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781]);
-		leeds = new Crossingify.island({'el':document.getElementById('leeds'),'file':'leeds.json','name':'Leeds'});
-		leeds.loadOverpass([53.789877540551004,-1.5595436096191406,53.805314167000475,-1.5297603607177734]);
 		//london = new Crossingify.island({'el':document.getElementById('london'),'file':'london.json','name':'Central London'});
 		//london.loadOverpass([51.49853797977577,-0.12694358825683594,51.522683104628875,-0.08166790008544922]);
 	});
@@ -535,12 +549,19 @@
 	<div class="holder">
 		<h1>Crossing-ify</h1>
 		<p style="text-align:center;">An experiment in turning real places into ACNH-style maps.</p>
+		<div style="text-align:center;">
+			<select id="location">
+				<option value="">Choose a location</option>
+				<option value="overpass/harrogate.json" data-bbox="53.93082627406353,-1.6427993774414062,54.040643038253954,-1.4014434814453123">Harrogate</option>
+				<option value="overpass/hebden-bridge.json" data-bbox="53.727033218211915,-2.0401954650878906,53.75464860363065,-1.979856491088867">Hebden Bridge</option>
+				<option value="overpass/leeds.json" data-bbox="53.789877540551004,-1.5595436096191406,53.805314167000475,-1.5297603607177734">Leeds</option>
+				<option value="overpass/yeadon.json" data-bbox="53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781">Yeadon</option>
+				<option value="overpass/york.json" data-bbox="53.90636074242822,-1.1981964111328125,54.016241919537,-0.9568405151367188">York</option>
+			</select>
+		</div>
 	</div>
 	<div class="holder">
-		<div id="yeadon" class="island-map"></div>
-	</div>
-	<div class="holder">
-		<div id="leeds" class="island-map"></div>
+		<div id="island" class="island-map"></div>
 	</div>
 </body>
 </html>
