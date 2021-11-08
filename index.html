@@ -4,49 +4,48 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="utf-8" />
 	<title>Crossing-ify: ACNH-style maps of real places</title>
-	<script>
-	
-	</script>
+	<script src="dom-to-image.min.js"></script>
 	<style>
 	/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select{margin:0}html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}img,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}
 
 	/* vietnamese */
 	@font-face {
-	  font-family: 'Quicksand';
-	  font-style: normal;
-	  font-weight: 700;
-	  font-display: swap;
-	  src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58m-wi40.woff2) format('woff2');
-	  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
+		font-family: 'Quicksand';
+		font-style: normal;
+		font-weight: 700;
+		font-display: swap;
+		src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58m-wi40.woff2) format('woff2');
+		unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
 	}
 	/* latin-ext */
 	@font-face {
-	  font-family: 'Quicksand';
-	  font-style: normal;
-	  font-weight: 700;
-	  font-display: swap;
-	  src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58i-wi40.woff2) format('woff2');
-	  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+		font-family: 'Quicksand';
+		font-style: normal;
+		font-weight: 700;
+		font-display: swap;
+		src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58i-wi40.woff2) format('woff2');
+		unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 	}
 	/* latin */
 	@font-face {
-	  font-family: 'Quicksand';
-	  font-style: normal;
-	  font-weight: 700;
-	  font-display: swap;
-	  src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58a-wg.woff2) format('woff2');
-	  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		font-family: 'Quicksand';
+		font-style: normal;
+		font-weight: 700;
+		font-display: swap;
+		src: url(https://fonts.gstatic.com/s/quicksand/v24/6xK-dSZaM9iE8KbpRA_LJ3z8mH9BOJvgkBgv58a-wg.woff2) format('woff2');
+		unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 	}
 
 	html { min-height: 100%; }
-	body { background: #78d5c3;  font-family: Quicksand, sans-serif; padding: 0; margin: 0; font-size: 16px; background-image: url(textures/sea.png); }
+	body { background: #78d5c3;	font-family: Quicksand, sans-serif; padding: 0; margin: 0; font-size: 16px; background-image: url(textures/sea.png); }
 	h1 { font-size: 2em; text-align: center; }
 	h1 + * { margin-top: 1em; }
 	p { margin-bottom: 1em; }
 	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
 
-	.island-map { position: relative; text-align: center; font-size: 24px; padding: 2em 3em 3em 3em; background-image: url(textures/sea.png); }
-	.island-map .inner { width: 100%; height: 100%; position: relative; display: grid; grid-template-rows: auto 1fr; grid-gap: 1em; }
+	.island-map { position: relative; text-align: center; }
+	.island-map .inner { background-image: url(textures/sea.png); padding: 2em 5em; font-size: 24px; }
+	.island-map .graphic { width: 100%; height: 100%; position: relative; display: grid; grid-template-rows: auto 1fr; grid-gap: 1em; margin-bottom: 1em; }
 	.island-map .header { position: relative; z-index: 1; font-size: 1.5em; }
 	.island-map .banner {
 		position: relative;
@@ -78,7 +77,7 @@
 	}
 	.island-map .banner::before { border-radius: 0.25em 0.125em 0.125em 0.25em; }
 	.island-map .banner::after { border-radius: 0.125em 0.25em 0.25em 0.125em; left: auto; right: -1em; border-left: 1.5em solid #b29d42; border-right: 0.6em solid transparent; transform: rotate(5deg); }
-	.island-map .island { position: relative; padding: 10%; padding-top: 85%; aspect-ratio: 4 / 3.4; }
+	.island-map .island { position: relative; padding: 10%; padding-top: 80%; }
 	.island-map .island-inner { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
 	.island-map .grid { width: 100%; height: 100%; position: absolute; left: 0;top: 0; z-index: 5; }
 	.island-map ol {
@@ -90,44 +89,189 @@
 		padding: 0;
 		list-style: none;
 	}
-	.island-map .horizontal { grid-template-rows: repeat(6,auto); left: -1em; width: calc(100% + 2em); height: 100%; }
+	.island-map .horizontal { grid-template-rows: repeat(6,auto); left: 0em; width: calc(100%); height: 100%; }
 	.island-map .horizontal li { border-bottom: 0.2em dashed rgba(245,255,245,0.2); text-align: left; position: relative; }
-	.island-map .vertical { grid-template-columns: repeat(7,auto); bottom: -1em; width: 100%; height: calc(100% + 1em); }
+	.island-map .vertical { grid-template-columns: repeat(7,auto); bottom: 0em; width: 100%; height: calc(100%); }
 	.island-map .vertical li { border-right: 0.2em dashed rgba(245,255,245,0.2); text-align: center; position: relative; }
 	.island-map .grid li:last-child { border: 0; }
 	.island-map .horizontal li .letter { position: absolute; top: 50%; transform: translate3d(0,-50%,0); }
 	.island-map .vertical li .letter { position: absolute; top: 100%; transform: translate3d(0,-100%,0); }
 	.island-map .land, .overlay { position: absolute; top: 10%; left: 8.5%; width: 83%; height: 80%; }
-	.island-map .land { background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; }
+	.island-map .land { background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; border-radius: 1em; }
+	.island-map .land .loader { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0); color: white; }
+	.island-map .land canvas { width: 100%; height: 100%; image-rendering: pixelated; }
 	.island-map .overlay { z-index: 10; }
 	.island-map .point { width: 1.75em; height: 1.75em; line-height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); cursor: pointer; }
 	.island-map .point img { width: 100%; }
 	.island-map .tooltip { transition: all 0.3s ease-out; position: absolute; line-height: 2em; min-width: 8em; top: 0; left: 50%; background: #dce8c2; white-space: nowrap; transform: translate3d(-50%,-100%,0); padding: 0 1em; border-radius:1em; }
 	.island-map .tooltip.active { transform: translate3d(-50%,-150%,0); }
 	.island-map .tooltip::before { content: ""; position: absolute; width: 0; height: 0; border: 0.5em solid transparent;border-top: 0.75em solid #dce8c2; border-bottom: 0px;left: 50%; top: 95%; transform: translate3d(-50%,0,0); }
-	.island-map .credit { font-size: 0.6em; position: absolute; bottom: 0.5em; right: 1em; margin-bottom: 0; color: #48a495; }
+	.island-map .credit { font-size: 0.6em; text-align:center; margin-bottom: 0; color: #48a495; }
+	.island-map button { color: #83826c; background: white; border-width: 0; border-radius: 0.8em; padding: 0.25em 0.5em; font: inherit; font-size: 1.5em; }
+	.island-map button:focus, .island-map button:hover { color: white; background: #007d75; outline: 0.25em solid #f1e26f; cursor: pointer; }
+	.island-map button:focus span, .island-map button:hover span { background: white; color: #00b5a9 }
+	.island-map button span { width: 1.5em; line-height:1.5em;margin-right: 0.25em; display: inline-block; border-radius: 100%; background: #83826c; color: white; }
 	@media only screen and (max-width: 960px) {
 		.island-map { font-size: calc(2vw + .5vmin); }
 	}
+	
+	
 	</style>
 	<script>
+	/*
+	*** Ramer Douglas Peucker
+
+	The Ramer-Douglas-Peucker algorithm is an algorithm for reducing the number of points in a curve that is approximated by a series of points. 
+	It does so by "thinking" of a line between the first and last point in a set of points that form the curve. 
+	It checks which point in between is farthest away from this line. 
+	If the point (and as follows, all other in-between points) is closer than a given distance 'epsilon', it removes all these in-between points. 
+	If on the other hand this 'outlier point' is farther away from our imaginary line than epsilon, the curve is split in two parts. 
+	The function is recursively called on both resulting curves, and the two reduced forms of the curve are put back together.
+
+	1) From the first point up to and including the outlier
+	2) The outlier and the remaining points.
+
+	I hope that by looking at this source code for my Ramer Douglas Peucker implementation you will be able to get a correct reduction of your dataset.
+
+	@licence Feel free to use it as you please, a mention of my name is always nice.
+
+	Marius Karthaus
+	http://www.LowVoice.nl
+	 */
+	function simplifyPath(points,epsilon){
+		// this is the implementation with shortest Distance (as of 2013-09 suggested by the wikipedia page. Thanks Edward Lee for pointing this out)
+		function RDPsd(points,epsilon){
+			var firstPoint=points[0];
+			var lastPoint=points[points.length-1];
+			if (points.length<3){
+				return points;
+			}
+			var index=-1;
+			var dist=0;
+			for (var i=1;i<points.length-1;i++){
+				var cDist=distanceFromPointToLine(points[i],firstPoint,lastPoint);
+				if (cDist>dist){
+					dist=cDist;
+					index=i;
+				}
+			}
+			if (dist>epsilon){
+				// iterate
+				var l1=points.slice(0, index+1);
+				var l2=points.slice(index);
+				var r1=RDPsd(l1,epsilon);
+				var r2=RDPsd(l2,epsilon);
+				// concat r2 to r1 minus the end/startpoint that will be the same
+				var rs=r1.slice(0,r1.length-1).concat(r2);
+				return rs;
+			}else{
+				return [firstPoint,lastPoint];
+			}
+		}
+		function findPerpendicularDistance(p, p1,p2) {
+			// if start and end point are on the same x the distance is the difference in X.
+			var result;
+			var slope;
+			var intercept;
+			if (p1[0]==p2[0]){
+				result=Math.abs(p[0]-p1[0]);
+			}else{
+				slope = (p2[1] - p1[1]) / (p2[0] - p1[0]);
+				intercept = p1[1] - (slope * p1[0]);
+				result = Math.abs(slope * p[0] - p[1] + intercept) / Math.sqrt(Math.pow(slope, 2) + 1);
+			}
+			return result;
+		}
+		// code as suggested by Edward Lee
+		function distanceFromPointToLine(p,a,b){
+			// convert array to object to please Edwards code;
+			p={x:p[0],y:p[1]};
+			a={x:a[0],y:a[1]};
+			b={x:b[0],y:b[1]};
+			return Math.sqrt(distanceFromPointToLineSquared(p,a,b));
+		}
+		//This is the difficult part. Commenting as we go.
+		function distanceFromPointToLineSquared(p, i, j){
+			var lineLength = pointDistance(i,j);//First, we need the length of the line segment.
+			if(lineLength==0){	//if it's 0, the line is actually just a point.
+				return pointDistance(p,i);
+			}
+			var t = ((p.x-i.x)*(j.x-i.x)+(p.y-i.y)*(j.y-i.y))/lineLength; 
+
+			//t is very important. t is a number that essentially compares the individual coordinates
+			//distances between the point and each point on the line.
+
+			if(t<0){	//if t is less than 0, the point is behind i, and closest to i.
+				return pointDistance(p,i);
+			}	//if greater than 1, it's closest to j.
+			if(t>1){
+				return pointDistance(p,j);
+			}
+			return pointDistance(p, { x: i.x+t*(j.x-i.x),y: i.y+t*(j.y-i.y)});
+			//this figure represents the point on the line that p is closest to.
+		}
+
+		//returns distance between two points. Easy geometry.
+		var pointDistance = function (i,j){
+			return sqr(i.x-j.x)+sqr(i.y-j.y);
+		}
+
+		//just to make the code a bit cleaner.
+		sqr = function (x){
+			return x*x;
+		}
+		
+		return RDPsd(points,epsilon);
+	}
+
 	(function(root){
-		var ACNH = root.ACNH || {};
-		if(!ACNH.ready){
-			ACNH.ready = function(fn){
+		var Crossingify = root.Crossingify || {};
+		if(!Crossingify.ready){
+			Crossingify.ready = function(fn){
 				// Version 1.1
 				if(document.readyState != 'loading') fn();
 				else document.addEventListener('DOMContentLoaded', fn);
 			};
 		}
+		var icons = {
+			'airport':'<img src="icons/airport.svg" />',
+			'campsite':'<img src="icons/campsite.svg" />',
+			'museum':'<img src="icons/museum.svg" />',
+			'shop':'<img src="icons/shop.svg" />',
+			'tailor':'<img src="icons/tailor.svg" />',
+			'townhall':'<img src="icons/townhall.svg" />',
+			'bridge':'?',
+			'bridge-ns':'<img src="icons/bridge-ns.svg" />',
+			'bridge-ew':'<img src="icons/bridge-ew.svg" />',
+			'bridge-nwse':'<img src="icons/bridge-nwse.svg" />',
+			'bridge-swne':'<img src="icons/bridge-swne.svg" />'
+		};
 		function Island(opt){
 			var el = opt.el;
 			if(!opt) opt = {};
 			this.file = opt.file||"overpass.json";
 			this.el = el;
 			this.name = "Island";
+			
+			// Make internal DOM
+			this.el.innerHTML = '<div class="inner"><div class="graphic"><div class="header"><h2 class="banner">'+(opt.name||'Unknown')+'</h2></div><div class="island"><div class="island-inner"><div class="grid"><ol class="horizontal"><li><span class="letter">A</span></li><li><span class="letter">B</span></li><li><span class="letter">C</span></li><li><span class="letter">D</span></li><li><span class="letter">E</span></li><li><span class="letter">F</span></li></ol><ol class="vertical"><li><span class="letter">1</span></li><li><span class="letter">2</span></li><li><span class="letter">3</span></li><li><span class="letter">4</span></li><li><span class="letter">5</span></li><li><span class="letter">6</span></li><li><span class="letter">7</span></li></ol></div><div class="land"><div class="loader">Loading map data...</div></div><div class="overlay"></div></div></div></div><p class="credit">Data &copy; OpenStreetMap contributors (ODbL)</p></div><button class="save-button">Save</button>';
+
+			var _obj = this;
+			// Save DOM area as a PNG image
+			this.el.querySelector('.save-button').addEventListener('click',function(e){ _obj.saveImage(); });
 			return this;
 		}
+		
+		Island.prototype.saveImage = function(){
+			var inner = this.el.querySelector('.inner');
+			domtoimage.toPng(inner).then(function(dataUrl){
+				var link = document.createElement('a');
+				link.download = 'island.png';
+				link.href = dataUrl;
+				link.click();
+			});
+			return this;
+		};
 		Island.prototype.loadOverpass = function(bbox){
 			bbox = {'S':bbox[0],'W':bbox[1],'N':bbox[2],'E':bbox[3]};
 			this.bbox = bbox;
@@ -136,8 +280,19 @@
 			.then(response => response.json())
 			.then(data => {
 				this.overpass = data;
-				this.updateMap();
+				this.loaded();
 			});
+		};
+		Island.prototype.loaded = function(){
+			loader = this.el.querySelector('.loader');
+			if(loader) loader.parentNode.removeChild(loader);
+			this.canvas = document.createElement('canvas');
+			this.el.querySelector('.land').appendChild(this.canvas);
+			this.canvas.width = 96;
+			this.canvas.height = Math.round(this.canvas.width*(this.el.querySelector('.land').offsetHeight/this.el.querySelector('.land').offsetWidth));
+			this.ctx = this.canvas.getContext('2d');
+			this.updateMap();
+			return this;
 		};
 		Island.prototype.updateMap = function(){
 			var dlon = Math.abs(this.bbox.W-this.bbox.E);
@@ -150,8 +305,35 @@
 				if(this.overpass.elements[i].type=="way") this.data.ways[this.overpass.elements[i].id] = this.overpass.elements[i];
 				this.data.lookup[this.overpass.elements[i].id] = this.overpass.elements[i];
 			}
+			// Draw roads
 			for(var i = 0; i < this.overpass.elements.length; i++){
-				
+				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="motorway"){
+					this.addWay(hexToRGB('#b3a86a'),1/48,this.overpass.elements[i],this.bbox);
+				}
+				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="trunk"){
+					this.addWay(hexToRGB('#b3a86a'),1/48,this.overpass.elements[i],this.bbox);
+				}
+				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="primary"){
+					this.addWay(hexToRGB('#b3a86a'),1/60,this.overpass.elements[i],this.bbox);
+				}
+			}
+			// Draw waterways
+			for(var i = 0; i < this.overpass.elements.length; i++){
+				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
+					this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
+				}
+				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="canal"){
+					this.addWay(hexToRGB('#79d5c1'),1/80,this.overpass.elements[i],this.bbox);
+				}
+			}
+			// Draw bridges
+			for(var i = 0; i < this.overpass.elements.length; i++){
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes"){
+					this.addWay(hexToRGB('#83856d'),1/48,this.overpass.elements[i],this.bbox);
+				}
+			}
+			// Draw points-of-interest
+			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="node" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="tailor"){
 					this.addPOI('tailor',this.overpass.elements[i],this.bbox);
 				}
@@ -171,9 +353,10 @@
 					this.addPOI('museum',this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes"){
-					this.addPOI('bridge',this.overpass.elements[i],this.bbox);
+					//this.addPOI('bridge',this.overpass.elements[i],this.bbox);
 				}
 			}
+			return this;
 		};
 		function findCentre(data,a){
 			var i,n,lat,lon;
@@ -202,23 +385,71 @@
 			}else{
 				console.log('?',a);
 			}
-			
+		};
+		//https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+		function distanceToLine(p1,p2,x0,y0){
+			return Math.abs(((p2[0]-p1[0])*(p1[1]-y0) - (p1[0]-x0)*(p2[1]-p1[1]))/Math.sqrt(Math.pow((p2[0]-p1[0]),2) + Math.pow((p2[1]-p1[1]),2)));
 		}
-		icons = {
-			'airport':'<img src="icons/airport.svg" />',
-			'campsite':'<img src="icons/campsite.svg" />',
-			'museum':'<img src="icons/museum.svg" />',
-			'shop':'<img src="icons/shop.svg" />',
-			'tailor':'<img src="icons/tailor.svg" />',
-			'townhall':'<img src="icons/townhall.svg" />',
-			'bridge':'?',
-			'bridge-ns':'<img src="icons/bridge-ns.svg" />',
-			'bridge-ew':'<img src="icons/bridge-ew.svg" />',
-			'bridge-nwse':'&#10189;',
-			'bridge-swne':'<img src="icons/bridge-swne.svg" />'
+		function hexToRGB(hex){
+			var r = 0, g = 0, b = 0;
+			if(hex.length == 4){ // handling 3 digit hex
+				r = "0x" + hex[1] + hex[1];
+				g = "0x" + hex[2] + hex[2];
+				b = "0x" + hex[3] + hex[3];
+			}else if(hex.length == 7){ // handling 6 digit hex
+				r = "0x" + hex[1] + hex[2];
+				g = "0x" + hex[3] + hex[4];
+				b = "0x" + hex[5] + hex[6];
+			}
+			return [r,g,b,1];
+		}
+		
+
+		function drawThickLine(im,p1,p2,t,rgb){
+			var x,y,i,w,h,x0,x1,y1,y0,tint;
+			x0 = Math.floor(Math.min(p1[0],p2[0]));
+			x1 = Math.ceil(Math.max(p1[0],p2[0]));
+			y0 = Math.floor(Math.min(p1[1],p2[1]));
+			y1 = Math.ceil(Math.max(p1[1],p2[1]));
+			t /= 2;
+			tint = Math.ceil(t);
+			for(x = x0-tint; x < x1+tint; x++){
+				for(y = y0-tint; y < y1+tint; y++){
+					if(y >= 0 && x >= 0 && y < im.height && x < im.width){
+						if(distanceToLine(p1,p2,x,y) <= t){
+							i = (y*im.width + x)*4;
+							im.data[i] = rgb[0];
+							im.data[i+1] = rgb[1];
+							im.data[i+2] = rgb[2];
+							im.data[i+3] = rgb[3]*255;
+						}
+					}
+				}
+			}
+			return im;
+		}
+		Island.prototype.addWay = function(rgb,thick,element,bbox){
+			console.log('highway',element,this);
+			var w,h,n,node,rgb,pos,i,threshold,imageData,len,path;
+			w = this.canvas.width;
+			h = this.canvas.height;
+			this.ctx.imageSmoothingEnabled = false;
+			imageData = this.ctx.getImageData(0,0,w,h);
+			path = [];
+			for(n = 0; n < element.nodes.length; n++){
+				node = this.data.nodes[element.nodes[n]];
+				l = w*(node.lon-bbox.W)/Math.abs(bbox.W-bbox.E);
+				t = h*(1-(node.lat-bbox.S)/Math.abs(bbox.N-bbox.S));
+				path.push([l,t]);
+			}
+			n = path.length;
+			path = simplifyPath(path,w*thick*0.6);
+			for(n = 1; n < path.length; n++) imageData = drawThickLine(imageData,path[n-1],path[n],w*thick,rgb);
+			this.ctx.putImageData(imageData, 0, 0); // at coords 0,0
+			return this;
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
-			console.log(typ,element);
+			//console.log(typ,element);
 			var a,b,pos,l,t,el,_obj,bearing;
 			pos = findCentre(this.data,element);
 			l = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E));
@@ -277,7 +508,7 @@
 			theta_b = b.lat*Math.PI/180;
 			dl = (b.lon-a.lon)*Math.PI/180;
 			y = Math.sin(dl) * Math.cos(theta_b);
-			x = Math.cos(theta_a)*Math.sin(theta_b) -  Math.sin(theta_a)*Math.cos(theta_b)*Math.cos(dl);
+			x = Math.cos(theta_a)*Math.sin(theta_b) -	Math.sin(theta_a)*Math.cos(theta_b)*Math.cos(dl);
 			theta = Math.atan2(y, x);
 			bearing = (theta*180/Math.PI + 360) % 360; // in degrees
 			if(bearing > 180) bearing -= 360;
@@ -290,97 +521,32 @@
 		}
 
 
-		ACNH.island = Island;
-		root.ACNH = ACNH;		
+		Crossingify.island = Island;
+		root.Crossingify = Crossingify;		
 	})(window || this);
 
-	var yeadon,leeds;
-	ACNH.ready(function(){
+	var yeadon,leeds,london;
+	Crossingify.ready(function(){
 		//var url = "http://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0A%2F%2F%20gather%20results%0A%28%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Dtailor%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22tailor%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cshop%3Ddepartment_store%E2%80%9D%0A%20%20node%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22shop%22%3D%22department_store%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Camenity%3Dtownhall%E2%80%9D%0A%20%20node%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22amenity%22%3D%22townhall%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Caeroway%3Daerodrome%E2%80%9D%0A%20%20node%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22aeroway%22%3D%22aerodrome%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Ctourism%3Dcamp_site%E2%80%9D%0A%20%20node%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22tourism%22%3D%22camp_site%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cman_made%3Dbridge%E2%80%9D%0A%20%20node%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22man_made%22%3D%22bridge%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Cbuilding%3Dapartments%E2%80%9D%0A%20%20node%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22building%22%3D%22apartments%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dtrunk%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22trunk%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dprimary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22primary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20%2F%2F%20query%20part%20for%3A%20%E2%80%9Chighway%3Dsecondary%E2%80%9D%0A%20%20node%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20way%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%20%20relation%5B%22highway%22%3D%22secondary%22%5D%2853.833435275878394%2C-1.72760009765625%2C53.879199354755556%2C-1.6370487213134763%29%3B%0A%29%3B%0A%2F%2F%20print%20results%0Aout%20body%3B%0A%3E%3B%0Aout%20skel%20qt%3B"
-		yeadon = new ACNH.island({'el':document.getElementById('yeadon'),'file':'yeadon.json'});
+		yeadon = new Crossingify.island({'el':document.getElementById('yeadon'),'file':'yeadon.json','name':'Yeadon'});
 		yeadon.loadOverpass([53.82436764659003,-1.7408180236816406,53.889772644862695,-1.6220283508300781]);
-		leeds = new ACNH.island({'el':document.getElementById('leeds'),'file':'leeds.json'});
+		leeds = new Crossingify.island({'el':document.getElementById('leeds'),'file':'leeds.json','name':'Leeds'});
 		leeds.loadOverpass([53.789877540551004,-1.5595436096191406,53.805314167000475,-1.5297603607177734]);
+		//london = new Crossingify.island({'el':document.getElementById('london'),'file':'london.json','name':'Central London'});
+		//london.loadOverpass([51.49853797977577,-0.12694358825683594,51.522683104628875,-0.08166790008544922]);
 	});
 	</script>
 </head>
 <body>
-
 	<div class="holder">
 		<h1>Crossing-ify</h1>
 		<p style="text-align:center;">An experiment in turning real places into ACNH-style maps.</p>
 	</div>
 	<div class="holder">
-		<div id="yeadon" class="island-map">
-			<div class="inner">
-				<div class="header">
-					<h2 class="banner">Yeadon</h2>
-				</div>
-				<div class="island">
-					<div class="island-inner">
-						<div class="grid">
-							<ol class="horizontal">
-								<li><span class="letter">A</span></li>
-								<li><span class="letter">B</span></li>
-								<li><span class="letter">C</span></li>
-								<li><span class="letter">D</span></li>
-								<li><span class="letter">E</span></li>
-								<li><span class="letter">F</span></li>
-							</ol>
-							<ol class="vertical">
-								<li><span class="letter">1</span></li>
-								<li><span class="letter">2</span></li>
-								<li><span class="letter">3</span></li>
-								<li><span class="letter">4</span></li>
-								<li><span class="letter">5</span></li>
-								<li><span class="letter">6</span></li>
-								<li><span class="letter">7</span></li>
-							</ol>
-						</div>
-						<div class="land"></div>
-						<div class="overlay">Overlay</div>
-					</div>
-				</div>
-			</div>
-			<p class="credit">Data &copy; OpenStreetMap contributors (ODbL)</p>
-		</div>
-
+		<div id="yeadon" class="island-map"></div>
 	</div>
 	<div class="holder">
-		<div id="leeds" class="island-map">
-			<div class="inner">
-				<div class="header">
-					<h2 class="banner">Leeds</h2>
-				</div>
-				<div class="island">
-					<div class="island-inner">
-						<div class="grid">
-							<ol class="horizontal">
-								<li><span class="letter">A</span></li>
-								<li><span class="letter">B</span></li>
-								<li><span class="letter">C</span></li>
-								<li><span class="letter">D</span></li>
-								<li><span class="letter">E</span></li>
-								<li><span class="letter">F</span></li>
-							</ol>
-							<ol class="vertical">
-								<li><span class="letter">1</span></li>
-								<li><span class="letter">2</span></li>
-								<li><span class="letter">3</span></li>
-								<li><span class="letter">4</span></li>
-								<li><span class="letter">5</span></li>
-								<li><span class="letter">6</span></li>
-								<li><span class="letter">7</span></li>
-							</ol>
-						</div>
-						<div class="land"></div>
-						<div class="overlay">Overlay</div>
-					</div>
-				</div>
-			</div>
-			<p class="credit">Data &copy; OpenStreetMap contributors (ODbL)</p>
-		</div>
-
+		<div id="leeds" class="island-map"></div>
 	</div>
 </body>
 </html>
