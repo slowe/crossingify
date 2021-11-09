@@ -251,7 +251,7 @@
 			this.el = el;
 			this.name = "Island";
 			this.pixelated = false;
-			this.resolution = 96*5;
+			this.resolution = 80*5;	// 80x64
 			
 			// Make internal DOM
 			this.el.innerHTML = '<div class="inner"><div class="graphic"><div class="header"><h2 class="banner">'+(opt.name||'Unknown')+'</h2></div><div class="island"><div class="island-inner"><div class="grid"><ol class="horizontal"><li><span class="letter">A</span></li><li><span class="letter">B</span></li><li><span class="letter">C</span></li><li><span class="letter">D</span></li><li><span class="letter">E</span></li><li><span class="letter">F</span></li></ol><ol class="vertical"><li><span class="letter">1</span></li><li><span class="letter">2</span></li><li><span class="letter">3</span></li><li><span class="letter">4</span></li><li><span class="letter">5</span></li><li><span class="letter">6</span></li><li><span class="letter">7</span></li></ol></div><div class="land"><div class="loader">Loading map data...</div></div><div class="overlay"></div></div></div></div><p class="credit">Data &copy; OpenStreetMap contributors (ODbL)</p></div><button class="save-button">Save</button>';
