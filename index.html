@@ -172,20 +172,6 @@
 				return [firstPoint,lastPoint];
 			}
 		}
-		function findPerpendicularDistance(p, p1,p2) {
-			// if start and end point are on the same x the distance is the difference in X.
-			var result;
-			var slope;
-			var intercept;
-			if (p1[0]==p2[0]){
-				result=Math.abs(p[0]-p1[0]);
-			}else{
-				slope = (p2[1] - p1[1]) / (p2[0] - p1[0]);
-				intercept = p1[1] - (slope * p1[0]);
-				result = Math.abs(slope * p[0] - p[1] + intercept) / Math.sqrt(Math.pow(slope, 2) + 1);
-			}
-			return result;
-		}
 		// code as suggested by Edward Lee
 		function distanceFromPointToLine(p,a,b){
 			// convert array to object to please Edwards code;
@@ -222,15 +208,13 @@
 		return RDPsd(points,epsilon);
 	}
 
+	function ready(fn){
+		// Version 1.1
+    if(document.readyState != 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  };
 	(function(root){
 		var Crossingify = root.Crossingify || {};
-		if(!Crossingify.ready){
-			Crossingify.ready = function(fn){
-				// Version 1.1
-				if(document.readyState != 'loading') fn();
-				else document.addEventListener('DOMContentLoaded', fn);
-			};
-		}
 		var icons = {
 			'airport':'<img src="icons/airport.svg" />',
 			'campsite':'<img src="icons/campsite.svg" />',
@@ -284,7 +268,7 @@
 			});
 		};
 		Island.prototype.loaded = function(){
-			loader = this.el.querySelector('.loader');
+			var loader = this.el.querySelector('.loader');
 			if(loader) loader.parentNode.removeChild(loader);
 			this.canvas = document.createElement('canvas');
 			this.el.querySelector('.land').appendChild(this.canvas);
@@ -295,18 +279,21 @@
 			return this;
 		};
 		Island.prototype.updateMap = function(){
-			var dlon = Math.abs(this.bbox.W-this.bbox.E);
-			var dlat = Math.abs(this.bbox.N-this.bbox.S);
+			var dlon,dlat,i,lat,lon,a,b,t,l,w,h,img,water;
+			w = this.canvas.width;
+			h = this.canvas.height;
+			dlon = Math.abs(this.bbox.W-this.bbox.E);
+			dlat = Math.abs(this.bbox.N-this.bbox.S);
 			this.overlay = this.el.querySelector('.overlay');
 			this.overlay.innerHTML = "";
 			this.data = {'nodes':{},'ways':{},'lookup':{}};
-			for(var i = 0; i < this.overpass.elements.length; i++){
+			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="node") this.data.nodes[this.overpass.elements[i].id] = this.overpass.elements[i];
 				if(this.overpass.elements[i].type=="way") this.data.ways[this.overpass.elements[i].id] = this.overpass.elements[i];
 				this.data.lookup[this.overpass.elements[i].id] = this.overpass.elements[i];
 			}
 			// Draw roads
-			for(var i = 0; i < this.overpass.elements.length; i++){
+			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="motorway"){
 					this.addWay('#b3a86a',1/48,this.overpass.elements[i],this.bbox);
 				}
@@ -318,7 +305,7 @@
 				}
 			}
 			// Draw waterways
-			for(var i = 0; i < this.overpass.elements.length; i++){
+			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
 					if(this.overpass.elements[i].tags.ship){
 						this.addWay('#79d5c1',1/15,this.overpass.elements[i],this.bbox);
@@ -333,13 +320,29 @@
 				}
 			}
 			// Draw bridges
-			for(var i = 0; i < this.overpass.elements.length; i++){
+			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes"){
-					this.addWay('#83856d',1/36,this.overpass.elements[i],this.bbox);
+					// We only want to draw bridges over water
+
+					// Find the lat/lon of the middle of the bridge
+					a = this.data.lookup[this.overpass.elements[i].nodes[0]];
+					b = this.data.lookup[this.overpass.elements[i].nodes[this.overpass.elements[i].nodes.length-1]];
+					lat = (b.lat + (a.lat-b.lat)/2);
+					lon = (b.lon + (a.lon-b.lon)/2);
+					
+					// Convert to x,y coordinates
+					l = w*(lon-this.bbox.W)/Math.abs(this.bbox.W-this.bbox.E);
+					t = h*(1-(lat-this.bbox.S)/Math.abs(this.bbox.N-this.bbox.S));
+					
+					// Get the colour of the middle of the bridge
+					img = this.ctx.getImageData(l,t,1,1);
+					water = hexToRGB('#79d5c1');
+					// If it matches the water colour we draw the bridge
+					if(img.data[0]==water[0] && img.data[1]==water[1] && img.data[2]==water[2]) this.addWay('#83856d',1/36,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw points-of-interest
-			for(var i = 0; i < this.overpass.elements.length; i++){
+			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="node" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.shop && this.overpass.elements[i].tags.shop=="tailor"){
 					this.addPOI('tailor',this.overpass.elements[i],this.bbox);
 				}
@@ -365,7 +368,7 @@
 			return this;
 		};
 		function findCentre(data,a){
-			var i,n,lat,lon;
+			var i,n,lat,lon,node,c;
 			if(a.type=="way"){
 				lat = 0;
 				lon = 0;
@@ -391,7 +394,7 @@
 			}else{
 				console.log('?',a);
 			}
-		};
+		}
 		//https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 		function distanceToLine(p1,p2,x0,y0){
 			return Math.abs(((p2[0]-p1[0])*(p1[1]-y0) - (p1[0]-x0)*(p2[1]-p1[1]))/Math.sqrt(Math.pow((p2[0]-p1[0]),2) + Math.pow((p2[1]-p1[1]),2)));
@@ -410,7 +413,7 @@
 			return [r&255, g&255, b&255,1];
 		}
 		function drawThickLine(im,p1,p2,t,rgb){
-			var x,y,i,w,h,x0,x1,y1,y0,tint;
+			var x,y,i,x0,x1,y1,y0,tint;
 			x0 = Math.floor(Math.min(p1[0],p2[0]));
 			x1 = Math.ceil(Math.max(p1[0],p2[0]));
 			y0 = Math.floor(Math.min(p1[1],p2[1]));
@@ -434,7 +437,7 @@
 		}
 		Island.prototype.addWay = function(hex,thick,element,bbox){
 			//console.log('highway',element,this);
-			var w,h,n,node,rgb,pos,i,threshold,imageData,len,path;
+			var w,h,n,node,rgb,imageData,path,l,t;
 			w = this.canvas.width;
 			h = this.canvas.height;
 			rgb = hexToRGB(hex);
@@ -472,12 +475,12 @@
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
 			//console.log(typ,element);
-			var a,b,pos,l,t,el,_obj,bearing;
+			var pos,l,t,el,_obj,bearing;
 			pos = findCentre(this.data,element);
 			l = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E));
 			t = (100-100*(pos.lat-bbox.S)/Math.abs(bbox.N-bbox.S));
 			if(l >= 0 && l <= 100 && t >= 0 && t<= 100){
-				var el = document.createElement('div');
+				el = document.createElement('div');
 				el.setAttribute('data',element.id);
 				el.setAttribute('data-type',typ);
 				el.classList.add('point');
@@ -501,13 +504,14 @@
 			return this;
 		};
 		Island.prototype.showTooltip = function(el){
+      var i,p,element,txt,tooltip;
 			var tooltips = this.el.querySelectorAll('.tooltip');
 			if(tooltips){
 				for(i = 0 ; i < tooltips.length; i++) tooltips[i].parentNode.removeChild(tooltips[i]);
 			}
 			// If the target still exists in the DOM
 			if(el.parentNode){
-				var p = (el.tagName=="DIV") ? el : el.parentNode;
+				p = (el.tagName=="DIV") ? el : el.parentNode;
 				element = this.data.lookup[p.getAttribute('data')];
 				// Bring to front by appending to parent
 				p.parentNode.appendChild(p);
@@ -547,13 +551,14 @@
 		root.Crossingify = Crossingify;		
 	})(window || this);
 
-	var yeadon,leeds,london,island;
+	var island;
 	
-	Crossingify.ready(function(){
+	ready(function(){
 	
-		select = document.getElementById('location');
+		var select = document.getElementById('location');
 		select.addEventListener('change',function(e){ setIsland(); });
 		function setIsland(){
+      var file,name,bbox;
 			select = document.getElementById('location');
 			if(select.value){
 				file = select.value;
