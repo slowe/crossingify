@@ -353,28 +353,35 @@
 			// Draw roads
 			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="motorway"){
-					this.addWay('#b3a86a',1/48,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/36,this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="trunk"){
-					this.addWay('#b3a86a',1/48,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/36,this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="primary"){
-					this.addWay('#b3a86a',1/60,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/56,this.overpass.elements[i],this.bbox);
 				}
 			}
+			// Draw water bodies
+			for(i = 0; i < this.overpass.elements.length; i++){
+				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.natural=="water"){
+					this.addPolygon('#79d5c1',this.overpass.elements[i],this.bbox);
+				}
+			}
+			
 			// Draw waterways
 			for(i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
 					if(this.overpass.elements[i].tags.ship){
-						this.addWay('#79d5c1',1/15,this.overpass.elements[i],this.bbox);
+						this.addWay('#79d5c1',1/14,this.overpass.elements[i],this.bbox);
 					}else if(this.overpass.elements[i].tags.motorboat){
 						this.addWay('#79d5c1',1/28,this.overpass.elements[i],this.bbox);
 					}else{
-						this.addWay('#79d5c1',1/48,this.overpass.elements[i],this.bbox);
+						this.addWay('#79d5c1',1/36,this.overpass.elements[i],this.bbox);
 					}
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="canal"){
-					this.addWay('#79d5c1',1/64,this.overpass.elements[i],this.bbox);
+					this.addWay('#79d5c1',1/56,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw bridges
@@ -427,7 +434,9 @@
 		};
 		function findCentre(data,a){
 			var i,n,lat,lon,node,c;
-			if(a.type=="way"){
+			if(typeof a.lat==="number" && typeof a.lon==="number"){
+				return {'lat':a.lat,'lon':a.lon};
+			}else if(a.nodes){
 				lat = 0;
 				lon = 0;
 				n = a.nodes.length;
@@ -437,7 +446,7 @@
 					lon += node.lon;
 				}
 				return {'lat':lat/n,'lon':lon/n};
-			}else if(a.type=="relation"){
+			}else if(a.members){
 				lat = 0;
 				lon = 0;
 				n = a.members.length;
@@ -447,11 +456,11 @@
 					lon += c.lon;
 				}
 				return {'lat':lat/n,'lon':lon/n};
-			}else if(a.type=="node"){
-				return {'lat':a.lat,'lon':a.lon};
 			}else{
 				console.log('?',a);
+				return {'lat':a.lat,'lon':a.lon};
 			}
+			return {};
 		}
 		//https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 		function distanceToLine(p1,p2,x0,y0){
@@ -493,6 +502,44 @@
 			}
 			return im;
 		}
+		Island.prototype.addPolygon = function(hex,element,bbox){
+			//console.log('highway',element,this);
+			console.log(hex,element);
+			var w,h,n,node,rgb,imageData,path,l,t;
+			w = this.canvas.width;
+			h = this.canvas.height;
+			rgb = hexToRGB(hex);
+			nodes = [];
+			path = [];
+
+			this.ctx.fillStyle = 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+rgb[3]+')';
+			this.ctx.beginPath();
+			
+			if(element.members){
+				for(m = 0; m < element.members.length; m++){
+					if(element.members[m].role == "outer"){
+						console.log(this.data.ways[element.members[m].ref]);
+						for(n = 0; n < this.data.ways[element.members[m].ref].nodes.length; n++){
+							nodes.push(this.data.nodes[this.data.ways[element.members[m].ref].nodes[n]]);
+						}
+					}
+				}
+			}else if(element.nodes){
+				for(n = 0; n < element.nodes.length; n++) nodes.push(this.data.nodes[element.nodes[n]]);
+			}
+			for(n = 0; n < nodes.length; n++){
+				node = nodes[n];
+				l = w*(node.lon-bbox.W)/Math.abs(bbox.W-bbox.E);
+				t = h*(1-(node.lat-bbox.S)/Math.abs(bbox.N-bbox.S));
+				path.push([l,t]);
+			}
+			for(n = 0; n < path.length; n++){
+				if(n==0) this.ctx.moveTo(path[0][0],path[0][1]);
+				else this.ctx.lineTo(path[n][0],path[n][1]);
+			}
+			this.ctx.fill();
+			return this;
+		};
 		Island.prototype.addWay = function(hex,thick,element,bbox){
 			//console.log('highway',element,this);
 			var w,h,n,node,rgb,imageData,path,l,t;
@@ -532,7 +579,6 @@
 			return this;
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
-			//console.log(typ,element);
 			var pos,l,t,el,_obj,bearing;
 			pos = findCentre(this.data,element);
 			l = (100*(pos.lon-bbox.W)/Math.abs(bbox.W-bbox.E));
@@ -562,7 +608,7 @@
 			return this;
 		};
 		Island.prototype.showTooltip = function(el){
-      var i,p,element,txt,tooltip;
+			var i,p,element,txt,tooltip;
 			var tooltips = this.el.querySelectorAll('.tooltip');
 			if(tooltips){
 				for(i = 0 ; i < tooltips.length; i++) tooltips[i].parentNode.removeChild(tooltips[i]);
