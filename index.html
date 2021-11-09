@@ -103,7 +103,7 @@
 	.island-map .land, .overlay { position: absolute; top: 10%; left: 8.5%; width: 83%; height: 80%; }
 	.island-map .land { overflow: hidden; background: #40773e; z-index: 1; background-image: url(textures/grass.svg); background-size: 15%; border-radius: 1em; }
 	.island-map .land .loader { position: absolute; left: 50%; top: 50%; transform: translate3d(-50%,-50%,0); color: white; }
-	.island-map .land canvas { width: 100%; height: 100%; /*image-rendering: pixelated;*/ }
+	.island-map .land canvas { width: 100%; height: 100%; image-rendering: pixelated; }
 	.island-map .overlay { z-index: 10; }
 	.island-map .point { width: 1.75em; height: 1.75em; line-height: 1.75em; position: absolute; transform: translate3d(-50%,-50%,0); cursor: pointer; }
 	.island-map .point img { width: 100%; }
@@ -250,6 +250,8 @@
 			this.file = opt.file||"overpass.json";
 			this.el = el;
 			this.name = "Island";
+			this.pixelated = false;
+			this.resolution = 96*5;
 			
 			// Make internal DOM
 			this.el.innerHTML = '<div class="inner"><div class="graphic"><div class="header"><h2 class="banner">'+(opt.name||'Unknown')+'</h2></div><div class="island"><div class="island-inner"><div class="grid"><ol class="horizontal"><li><span class="letter">A</span></li><li><span class="letter">B</span></li><li><span class="letter">C</span></li><li><span class="letter">D</span></li><li><span class="letter">E</span></li><li><span class="letter">F</span></li></ol><ol class="vertical"><li><span class="letter">1</span></li><li><span class="letter">2</span></li><li><span class="letter">3</span></li><li><span class="letter">4</span></li><li><span class="letter">5</span></li><li><span class="letter">6</span></li><li><span class="letter">7</span></li></ol></div><div class="land"><div class="loader">Loading map data...</div></div><div class="overlay"></div></div></div></div><p class="credit">Data &copy; OpenStreetMap contributors (ODbL)</p></div><button class="save-button">Save</button>';
@@ -286,7 +288,7 @@
 			if(loader) loader.parentNode.removeChild(loader);
 			this.canvas = document.createElement('canvas');
 			this.el.querySelector('.land').appendChild(this.canvas);
-			this.canvas.width = 96;
+			this.canvas.width = this.resolution;
 			this.canvas.height = Math.round(this.canvas.width*(this.el.querySelector('.land').offsetHeight/this.el.querySelector('.land').offsetWidth));
 			this.ctx = this.canvas.getContext('2d');
 			this.updateMap();
@@ -306,34 +308,34 @@
 			// Draw roads
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="motorway"){
-					this.addWay(hexToRGB('#b3a86a'),1/48,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/48,this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="trunk"){
-					this.addWay(hexToRGB('#b3a86a'),1/48,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/48,this.overpass.elements[i],this.bbox);
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.highway=="primary"){
-					this.addWay(hexToRGB('#b3a86a'),1/60,this.overpass.elements[i],this.bbox);
+					this.addWay('#b3a86a',1/60,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw waterways
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="river"){
 					if(this.overpass.elements[i].tags.ship){
-						this.addWay(hexToRGB('#79d5c1'),1/15,this.overpass.elements[i],this.bbox);
+						this.addWay('#79d5c1',1/15,this.overpass.elements[i],this.bbox);
 					}else if(this.overpass.elements[i].tags.motorboat){
-						this.addWay(hexToRGB('#79d5c1'),1/28,this.overpass.elements[i],this.bbox);
+						this.addWay('#79d5c1',1/28,this.overpass.elements[i],this.bbox);
 					}else{
-						this.addWay(hexToRGB('#79d5c1'),1/48,this.overpass.elements[i],this.bbox);
+						this.addWay('#79d5c1',1/48,this.overpass.elements[i],this.bbox);
 					}
 				}
 				if(this.overpass.elements[i].type=="way" && this.overpass.elements[i].tags && this.overpass.elements[i].tags.waterway=="canal"){
-					this.addWay(hexToRGB('#79d5c1'),1/64,this.overpass.elements[i],this.bbox);
+					this.addWay('#79d5c1',1/64,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw bridges
 			for(var i = 0; i < this.overpass.elements.length; i++){
 				if(this.overpass.elements[i].tags && this.overpass.elements[i].tags.bridge=="yes"){
-					this.addWay(hexToRGB('#83856d'),1/36,this.overpass.elements[i],this.bbox);
+					this.addWay('#83856d',1/36,this.overpass.elements[i],this.bbox);
 				}
 			}
 			// Draw points-of-interest
@@ -405,10 +407,8 @@
 				g = "0x" + hex[3] + hex[4];
 				b = "0x" + hex[5] + hex[6];
 			}
-			return [r,g,b,1];
+			return [r&255, g&255, b&255,1];
 		}
-		
-
 		function drawThickLine(im,p1,p2,t,rgb){
 			var x,y,i,w,h,x0,x1,y1,y0,tint;
 			x0 = Math.floor(Math.min(p1[0],p2[0]));
@@ -432,24 +432,42 @@
 			}
 			return im;
 		}
-		Island.prototype.addWay = function(rgb,thick,element,bbox){
+		Island.prototype.addWay = function(hex,thick,element,bbox){
 			//console.log('highway',element,this);
 			var w,h,n,node,rgb,pos,i,threshold,imageData,len,path;
 			w = this.canvas.width;
 			h = this.canvas.height;
-			this.ctx.imageSmoothingEnabled = false;
-			imageData = this.ctx.getImageData(0,0,w,h);
+			rgb = hexToRGB(hex);
 			path = [];
+
+			if(this.pixelated){
+				this.ctx.imageSmoothingEnabled = false;
+				imageData = this.ctx.getImageData(0,0,w,h);
+			}else{
+				this.ctx.strokeStyle = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')';
+				this.ctx.lineWidth = thick*w;
+				this.ctx.lineCap = (element.tags.bridge ? "square":"round");
+				this.ctx.beginPath();
+			}
 			for(n = 0; n < element.nodes.length; n++){
 				node = this.data.nodes[element.nodes[n]];
 				l = w*(node.lon-bbox.W)/Math.abs(bbox.W-bbox.E);
 				t = h*(1-(node.lat-bbox.S)/Math.abs(bbox.N-bbox.S));
 				path.push([l,t]);
 			}
-			n = path.length;
-			path = simplifyPath(path,w*thick*0.6);
-			for(n = 1; n < path.length; n++) imageData = drawThickLine(imageData,path[n-1],path[n],w*thick,rgb);
-			this.ctx.putImageData(imageData, 0, 0); // at coords 0,0
+			// Simplify the paths
+			path = simplifyPath(path,w*thick*(this.pixelated ? 0.6 : 0.2));
+			if(!this.pixelated){
+				for(n = 0; n < path.length; n++){
+					if(n==0) this.ctx.moveTo(path[0][0],path[0][1]);
+					else this.ctx.lineTo(path[n][0],path[n][1]);
+				}
+				this.ctx.stroke();
+			}else{
+				n = path.length;
+				for(n = 1; n < path.length; n++) imageData = drawThickLine(imageData,path[n-1],path[n],w*thick,rgb);
+				this.ctx.putImageData(imageData, 0, 0);
+			}
 			return this;
 		};
 		Island.prototype.addPOI = function(typ,element,bbox){
@@ -553,7 +571,7 @@
 <body>
 	<div class="holder">
 		<h1>Crossing-ify</h1>
-		<p style="text-align:center;">An experiment in turning real places into ACNH-style maps.</p>
+		<p style="text-align:center;">An experiment in turning real places into Animal-Crossing-style maps.</p>
 		<div style="text-align:center;">
 			<select id="location">
 				<option value="">Choose a location</option>
