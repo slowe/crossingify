@@ -44,7 +44,7 @@
 	h3 { font-size: 1.25em; }
 	p { margin-bottom: 1em; }
 	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
-	#location { font: inherit; margin: auto; }
+	#location { font: inherit; margin: auto; font-size: 1em; height:2em;}
 
 	.island-map { position: relative; text-align: center; font-size: 24px; }
 	.island-map .inner { background-image: url(textures/sea.png); padding: 2em 5em; }
@@ -111,7 +111,7 @@
 	.island-map .tooltip.active { transform: translate3d(-50%,-150%,0); }
 	.island-map .tooltip::before { content: ""; position: absolute; width: 0; height: 0; border: 0.5em solid transparent;border-top: 0.75em solid #dce8c2; border-bottom: 0px;left: 50%; top: 95%; transform: translate3d(-50%,0,0); }
 	.island-map .credit { font-size: 0.6em; text-align:center; margin-bottom: 0; color: #48a495; }
-	.island-map button { color: #83826c; background: white; border-width: 0; border-radius: 0.8em; padding: 0.25em 0.5em; font: inherit; font-size: 1.5em; }
+	.island-map button { color: #83826c; background: white; border-width: 0; border-radius: 0.8em; padding: 0.25em 0.5em; font: inherit; font-size: 1em; }
 	.island-map button:focus, .island-map button:hover { color: white; background: #007d75; outline: 0.25em solid #f1e26f; cursor: pointer; }
 	.island-map button:focus span, .island-map button:hover span { background: white; color: #00b5a9 }
 	.island-map button span { width: 1.5em; line-height:1.5em;margin-right: 0.25em; display: inline-block; border-radius: 100%; background: #83826c; color: white; }
@@ -120,6 +120,62 @@
 	}
 	
 	
+	.dialogue {
+		position: relative;
+		z-index: 1;
+		min-height: 100px;
+		width: 60%;
+		background: #fffae4;
+		margin: auto;
+		border-radius: 4em;
+	}
+	.dialogue::before {
+		content: "";
+		z-index: 0;
+		position: absolute;
+		width: 108%;
+		height: 70%;
+		left: -4%;
+		border-radius: 8em;
+		background: #fffae4;
+	}
+	.dialogue::after {
+		content: "";
+		z-index: 0;
+		position: absolute;
+		width: 104%;
+		height: 50%;
+		left: -2%;
+		top: 50%;
+		border-radius: 8em;
+		background: #fffae4;
+	}
+	.dialogue-character {
+		font-size: 1em;
+		position: absolute;
+		top: -1em;
+		left: 0;
+		display: inline-block;
+		line-height: 2em;
+		padding: 0 1.5em;
+		color: #482016;
+		background-color: #dd8530;
+		border-radius: 2em;
+		transform: rotate(-4deg);
+	}
+	.dialogue-name { color: #eb992a!important; }
+	.dialogue-text {
+		position: relative;
+		z-index: 2;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: auto;
+		padding: 1.5em;
+		line-height: 1.6em;
+		color: #807256;
+	}
+	.dialogue-text a { color: #47c5fb; text-decoration:none; }
 	</style>
 	<script>
 	/*
@@ -597,8 +653,11 @@
 		<div id="island" class="island-map"></div>
 	</div>
 	<div class="holder">
-		<h2>About</h2>
-		<p>This tool was created by <a href="https://twitter.com/astronomyblog">Stuart</a> to show Animal-Crossing-style maps for various locations. It extracts town halls, museums, airports, campsites, department stores, tailors, roads, rivers, canals, and bridges from <a href="https://www.openstreetmap.org/">OpenStreetMap</a> (using <a href="http://overpass-turbo.eu/">OverpassTurbo</a>).</p>
+
+		<div class="dialogue"> 
+			<h2 class="dialogue-character">About</h2>
+			<div class="dialogue-text">This tool was created by <a href="https://twitter.com/astronomyblog" class="dialogue-name">Stuart</a> to show Animal-Crossing-style maps for various locations. It extracts town halls, museums, airports, campsites, department stores, tailors, roads, rivers, canals, and bridges from <a href="https://www.openstreetmap.org/">OpenStreetMap</a> (using <a href="http://overpass-turbo.eu/">OverpassTurbo</a>).</div>
+		</div>
 	</div>
 </body>
 </html>
