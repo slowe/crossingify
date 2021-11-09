@@ -37,13 +37,13 @@
 	}
 
 	html { min-height: 100%; }
-	body { background: #78d5c3;	font-family: Quicksand, sans-serif; padding: 0; margin: 0; font-size: 16px; background-image: url(textures/sea.png); }
+	body { background: #78d5c3;	font-family: Quicksand, sans-serif; padding: 2em; margin: 0; font-size: 16px; background-image: url(textures/sea.png); }
 	h1 { font-size: 2em; text-align: center; }
 	h1 + *, h2 + *, h3 + * { margin-top: 1em; }
 	h2 { font-size: 1.5em; }
 	h3 { font-size: 1.25em; }
 	p { margin-bottom: 1em; }
-	.holder { width: 960px; margin: auto; padding: 1em; max-width: 100%; }
+	.holder { width: 960px; margin: auto; padding: 0em; max-width: 100%; }
 	#location { font: inherit; margin: auto; font-size: 1em; height:2em;}
 
 	.island-map { position: relative; text-align: center; font-size: 24px; }
@@ -111,7 +111,7 @@
 	.island-map .tooltip.active { transform: translate3d(-50%,-150%,0); }
 	.island-map .tooltip::before { content: ""; position: absolute; width: 0; height: 0; border: 0.5em solid transparent;border-top: 0.75em solid #dce8c2; border-bottom: 0px;left: 50%; top: 95%; transform: translate3d(-50%,0,0); }
 	.island-map .credit { font-size: 0.6em; text-align:center; margin-bottom: 0; color: #48a495; }
-	.island-map button { color: #83826c; background: white; border-width: 0; border-radius: 0.8em; padding: 0.25em 0.5em; font: inherit; font-size: 1em; }
+	.island-map button { color: #807256; background: #fffae4; border-width: 0; border-radius: 0.8em; padding: 0.25em 0.5em; font: inherit; font-size: 1em; }
 	.island-map button:focus, .island-map button:hover { color: white; background: #007d75; outline: 0.25em solid #f1e26f; cursor: pointer; }
 	.island-map button:focus span, .island-map button:hover span { background: white; color: #00b5a9 }
 	.island-map button span { width: 1.5em; line-height:1.5em;margin-right: 0.25em; display: inline-block; border-radius: 100%; background: #83826c; color: white; }
@@ -122,7 +122,7 @@
 		min-height: 100px;
 		width: 60%;
 		background: #fffae4;
-		margin: auto;
+		margin: 2em auto;
 		border-radius: 4em;
 	}
 	.dialogue::before {
