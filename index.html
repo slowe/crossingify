@@ -115,11 +115,7 @@
 	.island-map button:focus, .island-map button:hover { color: white; background: #007d75; outline: 0.25em solid #f1e26f; cursor: pointer; }
 	.island-map button:focus span, .island-map button:hover span { background: white; color: #00b5a9 }
 	.island-map button span { width: 1.5em; line-height:1.5em;margin-right: 0.25em; display: inline-block; border-radius: 100%; background: #83826c; color: white; }
-	@media only screen and (max-width: 960px) {
-		.island-map { font-size: calc(2vw + .5vmin); }
-	}
-	
-	
+
 	.dialogue {
 		position: relative;
 		z-index: 1;
@@ -176,6 +172,11 @@
 		color: #807256;
 	}
 	.dialogue-text a { color: #47c5fb; text-decoration:none; }
+
+	@media only screen and (max-width: 960px) {
+		.island-map { font-size: calc(2vw + .5vmin); }
+		.dialogue { width: 100%; }
+	}
 	</style>
 	<script>
 	/*
