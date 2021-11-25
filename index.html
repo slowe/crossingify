@@ -268,9 +268,9 @@
 
 	function ready(fn){
 		// Version 1.1
-    if(document.readyState != 'loading') fn();
-    else document.addEventListener('DOMContentLoaded', fn);
-  };
+		if(document.readyState != 'loading') fn();
+		else document.addEventListener('DOMContentLoaded', fn);
+	};
 	(function(root){
 		var Crossingify = root.Crossingify || {};
 		var icons = {
@@ -314,16 +314,20 @@
 			});
 			return this;
 		};
-		Island.prototype.loadOverpass = function(bbox){
+		Island.prototype.loadOverpass = function(bbox,url){
 			bbox = {'S':bbox[0],'W':bbox[1],'N':bbox[2],'E':bbox[3]};
 			this.bbox = bbox;
-			var url = this.file;
+			if(!url){
+				url = "http://overpass-api.de/api/interpreter?data=%5Bbbox%3A"+bbox.S+"%2C"+bbox.W+"%2C"+bbox.N+"%2C"+bbox.E+"%5D%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%28node%5B%22shop%22%3D%22tailor%22%5D%3Bway%5B%22shop%22%3D%22tailor%22%5D%3Brelation%5B%22shop%22%3D%22tailor%22%5D%3Bnode%5B%22shop%22%3D%22department%5Fstore%22%5D%3Bway%5B%22shop%22%3D%22department%5Fstore%22%5D%3Brelation%5B%22shop%22%3D%22department%5Fstore%22%5D%3Bnode%5B%22amenity%22%3D%22townhall%22%5D%3Bway%5B%22amenity%22%3D%22townhall%22%5D%3Brelation%5B%22amenity%22%3D%22townhall%22%5D%3Bnode%5B%22aeroway%22%3D%22aerodrome%22%5D%3Bway%5B%22aeroway%22%3D%22aerodrome%22%5D%3Brelation%5B%22aeroway%22%3D%22aerodrome%22%5D%3Bnode%5B%22tourism%22%3D%22camp%5Fsite%22%5D%3Bway%5B%22tourism%22%3D%22camp%5Fsite%22%5D%3Brelation%5B%22tourism%22%3D%22camp%5Fsite%22%5D%3Bnode%5B%22tourism%22%3D%22museum%22%5D%3Bway%5B%22tourism%22%3D%22museum%22%5D%3Brelation%5B%22tourism%22%3D%22museum%22%5D%3Bway%5B%22bridge%22%3D%22yes%22%5D%5B%22highway%22%7E%22primary%7Ctrunk%22%5D%3Bnode%5B%22building%22%3D%22apartments%22%5D%3Bway%5B%22building%22%3D%22apartments%22%5D%3Brelation%5B%22building%22%3D%22apartments%22%5D%3Bway%5B%22highway%22%7E%22trunk%7Cprimary%22%5D%3Bway%5B%22water%22%3D%22lake%22%5D%3Brelation%5B%22water%22%3D%22lake%22%5D%3B%29%3Bout%3B%3E%3Bout%20skel%20qt%3B%0A";
+				console.warn('Making Overpass query',url);
+			}
 			fetch(url)
 			.then(response => response.json())
 			.then(data => {
 				this.overpass = data;
 				this.loaded();
 			});
+			return this;
 		};
 		Island.prototype.loaded = function(){
 			var loader = this.el.querySelector('.loader');
@@ -662,7 +666,7 @@
 		var select = document.getElementById('location');
 		select.addEventListener('change',function(e){ setIsland(); });
 		function setIsland(){
-      var file,name,bbox;
+			var file,name,bbox;
 			select = document.getElementById('location');
 			if(select.value){
 				file = select.value;
@@ -670,10 +674,34 @@
 				bbox = select.selectedOptions[0].getAttribute('data-bbox').split(/,/);
 				for(var i = 0; i < bbox.length; i++) bbox[i] = parseFloat(bbox[i]);
 				island = new Crossingify.island({'el':document.getElementById('island'),'file':file,'name':name});
-				island.loadOverpass(bbox);
+				island.loadOverpass(bbox,file);
 			}
 		}
 		setIsland();
+		
+		function getQS(){
+			var qs = {};
+			if(location.search){
+				bits = location.search.substr(1,).split(/\&/);
+				for(var i = 0; i < bits.length; i++){
+					bits[i] = bits[i].split(/=/);
+					qs[bits[i][0]] = bits[i][1];
+				}
+				if(qs.lat) qs.lat = parseFloat(qs.lat);
+				if(qs.lon) qs.lon = parseFloat(qs.lon);
+			}
+			return qs;
+		}
+		var query = getQS();
+		if(typeof query.lat==="number" && typeof query.lon==="number"){
+			if(!query.name) query.name = "No name provided";
+			d = 0.08;	// Size of bounding box in degrees
+			dlat = Math.min(1,d)/2;
+			dlon = Math.min(1,d/Math.sin(Math.PI*query.lat/180))/2;
+			bbox = [query.lat-dlat,query.lon-dlon,query.lat+dlat,query.lon+dlon];// S W N E
+			island = new Crossingify.island({'el':document.getElementById('island'),'name':query.name});
+			island.loadOverpass(bbox);
+		}
 	});
 	</script>
 </head>
