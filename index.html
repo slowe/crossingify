@@ -695,7 +695,7 @@
 		var query = getQS();
 		if(typeof query.lat==="number" && typeof query.lon==="number"){
 			if(!query.name) query.name = "No name provided";
-			d = 0.08;	// Size of bounding box in degrees
+			d = 0.07;	// Size of bounding box in degrees
 			dlat = Math.min(1,d)/2;
 			dlon = Math.min(1,d/Math.sin(Math.PI*query.lat/180))/2;
 			bbox = [query.lat-dlat,query.lon-dlon,query.lat+dlat,query.lon+dlon];// S W N E
